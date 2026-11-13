@@ -1,0 +1,213 @@
+#!/usr/bin/env bash
+# seclab: start, stop and inspect the lab projects, and run the portal.
+#
+# Layout: <ROOT>/portal/seclab (this file) and <ROOT>/<project>/run.sh.
+# Runtime files (pid and log per project) live in <ROOT>/.run/.
+set -u
+
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+PORTAL_DIR="$(dirname "$SELF")"
+ROOT="$(dirname "$PORTAL_DIR")"
+RUN_DIR="$ROOT/.run"
+PORTAL_PORT=8100
+PROJECTS=(malware-lab threat-intel honeypot-net ics-sim ai-ids)
+
+declare -A PORTS=(
+  [malware-lab]=8101
+  [threat-intel]=8102
+  [honeypot-net]=8103
+  [ics-sim]=8104
+  [ai-ids]=8105
+)
+
+usage() {
+  cat <<EOF
+usage: seclab <command> [name]
+
+  start <name|all>   start a project in the background (runs its ./run.sh)
+  stop <name|all>    stop a project (SIGTERM, then SIGKILL after 5 s)
+  status             show port, pid, running state and health of each project
+  portal             run the portal on 127.0.0.1:$PORTAL_PORT (foreground)
+  logs <name>        follow a project's log (Ctrl+C to quit)
+
+projects: ${PROJECTS[*]}
+EOF
+  exit "${1:-1}"
+}
+
+die() {
+  echo "seclab: $*" >&2
+  exit 1
+}
+
+is_project() {
+  local p
+  for p in "${PROJECTS[@]}"; do
+    [[ $p == "$1" ]] && return 0
+  done
+  return 1
+}
+
+# Sets TARGETS to every project for "all", or to the single named project.
+resolve_targets() {
+  if [[ $1 == all ]]; then
+    TARGETS=("${PROJECTS[@]}")
+  elif is_project "$1"; then
+    TARGETS=("$1")
+  else
+    die "unknown project '$1' (known: ${PROJECTS[*]}, all)"
+  fi
+}
+
+pid_file() { echo "$RUN_DIR/$1.pid"; }
+log_file() { echo "$RUN_DIR/$1.log"; }
+
+# The pid recorded at start time, or nothing.
+recorded_pid() {
+  local f
+  f="$(pid_file "$1")"
+  [[ -f $f ]] && cat "$f"
+  return 0
+}
+
+# A project counts as running while its process group exists.
+group_alive() {
+  [[ -n $1 ]] && kill -0 -- "-$1" 2>/dev/null
+}
+
+is_running() {
+  group_alive "$(recorded_pid "$1")"
+}
+
+start_one() {
+  local name=$1
+  local dir="$ROOT/$name"
+  local script="$dir/run.sh"
+  local log pid i
+
+  if [[ ! -d $dir ]]; then
+    echo "$name: project directory not found: $dir" >&2
+    return 1
+  fi
+  if [[ ! -f $script ]]; then
+    echo "$name: run.sh not found in $dir" >&2
+    return 1
+  fi
+  if [[ ! -x $script ]]; then
+    echo "$name: run.sh is not executable (chmod +x $script)" >&2
+    return 1
+  fi
+  if is_running "$name"; then
+    echo "$name: already running (pid $(recorded_pid "$name")), skipping"
+    return 0
+  fi
+
+  mkdir -p "$RUN_DIR"
+  log="$(log_file "$name")"
+  # setsid gives run.sh its own session and process group, so stop can signal the whole tree.
+  (cd "$dir" && exec setsid nohup ./run.sh >>"$log" 2>&1 </dev/null) &
+  pid=$!
+  echo "$pid" >"$(pid_file "$name")"
+
+  sleep 1
+  if ! group_alive "$pid"; then
+    rm -f "$(pid_file "$name")"
+    echo "$name: exited right after start, last log lines:" >&2
+    tail -n 5 "$log" >&2 2>/dev/null
+    return 1
+  fi
+  echo "$name: started (pid $pid, port ${PORTS[$name]}), log $log"
+}
+
+stop_one() {
+  local name=$1
+  local pid i
+  pid="$(recorded_pid "$name")"
+
+  if ! group_alive "$pid"; then
+    rm -f "$(pid_file "$name")"
+    echo "$name: not running"
+    return 0
+  fi
+
+  kill -TERM -- "-$pid" 2>/dev/null
+  for ((i = 0; i < 50; i++)); do
+    group_alive "$pid" || break
+    sleep 0.1
+  done
+  if group_alive "$pid"; then
+    kill -KILL -- "-$pid" 2>/dev/null
+    echo "$name: still alive after SIGTERM, sent SIGKILL"
+  fi
+  rm -f "$(pid_file "$name")"
+  echo "$name: stopped (pid $pid)"
+}
+
+show_status() {
+  local name port pid running body health
+  printf '%-14s %-6s %-8s %-8s %s\n' NAME PORT PID RUNNING HEALTH
+  for name in "${PROJECTS[@]}"; do
+    port="${PORTS[$name]}"
+    if is_running "$name"; then
+      running=yes
+      pid="$(recorded_pid "$name")"
+    else
+      running=no
+      pid="-"
+    fi
+    body="$(curl -s -m 2 "http://127.0.0.1:$port/api/health")"
+    if [[ -z $body ]]; then
+      health="no response"
+    else
+      health="$(grep -o '"status" *: *"[^"]*"' <<<"$body" | head -n 1 | sed 's/.*"\([^"]*\)"$/\1/')"
+      health="${health:-bad response}"
+    fi
+    printf '%-14s %-6s %-8s %-8s %s\n' "$name" "$port" "$pid" "$running" "$health"
+  done
+}
+
+cmd="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+case "$cmd" in
+  start|stop)
+    [[ $# -ge 1 ]] || usage
+    resolve_targets "$1"
+    rc=0
+    for name in "${TARGETS[@]}"; do
+      if [[ $cmd == start ]]; then
+        start_one "$name" || rc=1
+      else
+        stop_one "$name"
+      fi
+    done
+    exit "$rc"
+    ;;
+  status)
+    show_status
+    ;;
+  portal)
+    command -v python3 >/dev/null || die "python3 not found"
+    if curl -s -m 1 -o /dev/null "http://127.0.0.1:$PORTAL_PORT/"; then
+      die "something is already answering on 127.0.0.1:$PORTAL_PORT"
+    fi
+    exec python3 "$PORTAL_DIR/server.py"
+    ;;
+  logs)
+    [[ $# -ge 1 ]] || usage
+    is_project "$1" || die "unknown project '$1' (known: ${PROJECTS[*]})"
+    log="$(log_file "$1")"
+    [[ -f $log ]] || die "no log yet for $1 ($log)"
+    exec tail -n 100 -f "$log"
+    ;;
+  -h|--help|help)
+    usage 0
+    ;;
+  "")
+    usage
+    ;;
+  *)
+    echo "seclab: unknown command '$cmd'" >&2
+    usage
+    ;;
+esac
