@@ -1,0 +1,90 @@
+{
+ "counters": {
+  "modbus_total": 33322,
+  "modbus_blocked": 0,
+  "modbus_dropped": 0,
+  "flood_requests": 0
+ },
+ "rows": [
+  {
+   "id": 33323,
+   "t": 15868.0,
+   "src": "10.10.2.10",
+   "zone": "supervisory",
+   "unit": 1,
+   "fc": 2,
+   "addr": 0,
+   "qty": 16,
+   "value": null,
+   "write": false,
+   "result": "ok",
+   "reason": "",
+   "transport": "sim",
+   "count": 1
+  },
+  {
+   "id": 33322,
+   "t": 15868.0,
+   "src": "10.10.2.10",
+   "zone": "supervisory",
+   "unit": 1,
+   "fc": 1,
+   "addr": 0,
+   "qty": 16,
+   "value": null,
+   "write": false,
+   "result": "ok",
+   "reason": "",
+   "transport": "sim",
+   "count": 1
+  },
+  {
+   "id": 33321,
+   "t": 15868.0,
+   "src": "10.10.2.10",
+   "zone": "supervisory",
+   "unit": 1,
+   "fc": 3,
+   "addr": 0,
+   "qty": 32,
+   "value": null,
+   "write": false,
+   "result": "ok",
+   "reason": "",
+   "transport": "sim",
+   "count": 1
+  },
+  {
+   "id": 33320,
+   "t": 15868.0,
+   "src": "10.10.2.10",
+   "zone": "supervisory",
+   "unit": 1,
+   "fc": 4,
+   "addr": 0,
+   "qty": 72,
+   "value": null,
+   "write": false,
+   "result": "ok",
+   "reason": "",
+   "transport": "sim",
+   "count": 1
+  },
+  {
+   "id": 33319,
+   "t": 15866.0,
+   "src": "10.10.2.10",
+   "zone": "supervisory",
+   "unit": 1,
+   "fc": 2,
+   "addr": 0,
+   "qty": 16,
+   "value": null,
+   "write": false,
+   "result": "ok",
+   "reason": "",
+   "transport": "sim",
+   "count": 1
+  }
+ ]
+}

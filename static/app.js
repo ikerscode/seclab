@@ -68,6 +68,51 @@
     }
   }
 
-  document.getElementById("refresh").addEventListener("click", refresh);
+  // ---------------------------------------------------------------- pipeline panel
+  const linkTag = (s) => String(s).startsWith("up") ? '<span class="tag ok">up</span>' : `<span class="tag crit">${hud.esc(s)}</span>`;
+
+  async function refreshPipeline() {
+    let view;
+    try {
+      view = await hud.api("/api/pipeline");
+    } catch (err) {
+      return;
+    }
+    const last = view.last_run;
+    document.getElementById("pl-last").textContent = last && last.finished
+      ? `last pass ${hud.fmtTime(last.finished)}, ${view.outbox} waiting for ai-ids, ${view.totals.forwarded || 0} alerts forwarded in total`
+      : "not run yet";
+    hud.renderTable("#pl-links", view.links, [
+      { key: "link", label: "Link" }, { key: "status", label: "Status", render: linkTag },
+      { key: "sent", label: "Last pass" }, { key: "note", label: "Note" }, { key: "carries", label: "Carries" },
+    ]);
+    hud.renderTable("#pl-incidents", view.incidents, [
+      { key: "id", label: "Incident" }, { key: "severity", label: "Severity", render: (v) => hud.severityTag(v) },
+      { key: "score", label: "Score" }, { key: "alerts", label: "Alerts" }, { key: "pipeline_alerts", label: "From pipeline" },
+      { key: "systems", label: "Systems" }, { key: "stages", label: "Stages" }, { key: "title", label: "Title" },
+    ], { empty: "No incidents with pipeline alerts yet. Start the labs and run the pipeline." });
+    hud.renderTable("#pl-shared", view.shared_indicators, [
+      { key: "indicator", label: "Indicator" }, { key: "labs", label: "Seen by" }, { key: "intel", label: "threat-intel" },
+    ], { empty: "None yet." });
+  }
+
+  async function runPipeline() {
+    const btn = document.getElementById("pl-run");
+    btn.disabled = true;
+    hud.toast("Pipeline pass running...");
+    try {
+      const res = await hud.api("/api/pipeline/run", { method: "POST" });
+      hud.toast(`Pipeline: ${res.forward.accepted} alerts accepted by ai-ids, ${res.incidents} incidents`, 6000);
+    } catch (err) {
+      hud.toast("Pipeline failed: " + err.message, 8000);
+    } finally {
+      btn.disabled = false;
+      refreshPipeline();
+    }
+  }
+
+  document.getElementById("pl-run").addEventListener("click", runPipeline);
+  document.getElementById("refresh").addEventListener("click", () => { refresh(); refreshPipeline(); });
   hud.every(5000, refresh);
+  hud.every(15000, refreshPipeline);
 })();

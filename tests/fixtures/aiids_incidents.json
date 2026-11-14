@@ -1,0 +1,213 @@
+[
+ {
+  "id": "INC-132",
+  "first_ts": 1791449129.4541638,
+  "last_ts": 1791466507.1828356,
+  "n_alerts": 31,
+  "stages": {
+   "recon": 1791449129.4541638,
+   "initial_access": 1791449400.0,
+   "execution_persistence": 1791451057.6406705,
+   "lateral_movement": 1791453411.0752983,
+   "command_and_control": 1791451353.249859,
+   "exfil_impact": 1791457176.565728
+  },
+  "stage_count": 6,
+  "progression": false,
+  "systems": [
+   "honeypot-net",
+   "hostlog-db01",
+   "hostlog-dc01",
+   "hostlog-files01",
+   "hostlog-web01",
+   "hostlog-ws08",
+   "hostlog-ws09",
+   "sensor-corp",
+   "sensor-dmz",
+   "sensor-srv"
+  ],
+  "max_confidence": 1.0,
+  "mean_confidence": 0.841,
+  "score": 100.0,
+  "severity": "critical",
+  "title": "Recon -> Initial access -> Execution / persistence -> Lateral movement -> C2 -> Exfil / impact (db01, dc01, dns01, files01)",
+  "techniques": [
+   "T1021",
+   "T1021.002",
+   "T1046",
+   "T1071.001",
+   "T1071.004",
+   "T1110.001",
+   "T1190",
+   "T1498.001",
+   "T1543.003"
+  ],
+  "entities": [
+   "host:db01",
+   "host:dc01",
+   "host:dns01",
+   "host:files01",
+   "host:web01",
+   "host:ws08",
+   "host:ws09",
+   "ip:10.99.0.22",
+   "ip:198.51.100.26",
+   "ip:203.0.113.13",
+   "user:svc_web",
+   "user:www-data"
+  ],
+  "campaigns": {
+   "d4-A": 29
+  }
+ },
+ {
+  "id": "INC-188",
+  "first_ts": 1791478866.6673024,
+  "last_ts": 1791502111.0457199,
+  "n_alerts": 6,
+  "stages": {
+   "initial_access": 1791478866.6673024,
+   "lateral_movement": 1791480055.221478,
+   "exfil_impact": 1791480054.221478
+  },
+  "stage_count": 3,
+  "progression": true,
+  "systems": [
+   "hostlog-db01",
+   "hostlog-web01",
+   "sensor-dmz",
+   "sensor-srv"
+  ],
+  "max_confidence": 1.0,
+  "mean_confidence": 0.951,
+  "score": 83.0,
+  "severity": "critical",
+  "title": "Initial access -> Lateral movement -> Exfil / impact (db01, web01)",
+  "techniques": [
+   "T1021",
+   "T1030",
+   "T1078",
+   "T1110",
+   "T1110.001"
+  ],
+  "entities": [
+   "host:db01",
+   "host:web01",
+   "ip:192.0.2.43",
+   "ip:203.0.113.103",
+   "user:deploy"
+  ],
+  "campaigns": {
+   "d4-B": 6
+  }
+ },
+ {
+  "id": "INC-150",
+  "first_ts": 1791454041.2834833,
+  "last_ts": 1791457920.0,
+  "n_alerts": 8,
+  "stages": {
+   "recon": 1791454041.2834833,
+   "execution_persistence": 1791457920.0,
+   "lateral_movement": 1791456480.478097
+  },
+  "stage_count": 3,
+  "progression": false,
+  "systems": [
+   "hostlog-backup01",
+   "hostlog-db01",
+   "hostlog-files01",
+   "sensor-srv"
+  ],
+  "max_confidence": 1.0,
+  "mean_confidence": 0.864,
+  "score": 68.0,
+  "severity": "high",
+  "title": "Recon -> Execution / persistence -> Lateral movement (adm01, backup01, db01, dc01)",
+  "techniques": [
+   "T1021",
+   "T1021.002",
+   "T1046",
+   "T1543.003"
+  ],
+  "entities": [
+   "host:adm01",
+   "host:backup01",
+   "host:db01",
+   "host:dc01",
+   "host:dns01",
+   "host:files01",
+   "host:ws07",
+   "user:it.admin"
+  ],
+  "campaigns": {
+   "benign:inventory-sweep": 1,
+   "d4-D": 6,
+   "benign:new-agent": 1
+  }
+ },
+ {
+  "id": "INC-205",
+  "first_ts": 1794622567.4003985,
+  "last_ts": 1794622568.7861924,
+  "n_alerts": 3,
+  "stages": {
+   "recon": 1794622567.4003985,
+   "command_and_control": 1794622567.4223192,
+   "exfil_impact": 1794622567.4085114
+  },
+  "stage_count": 3,
+  "progression": true,
+  "systems": [
+   "pcap:lo"
+  ],
+  "max_confidence": 1.0,
+  "mean_confidence": 0.879,
+  "score": 54.0,
+  "severity": "high",
+  "title": "Recon -> C2 -> Exfil / impact ()",
+  "techniques": [
+   "T1046",
+   "T1071.001",
+   "T1498.001"
+  ],
+  "entities": [
+   "ip:127.0.0.1"
+  ],
+  "campaigns": {}
+ },
+ {
+  "id": "INC-176",
+  "first_ts": 1791468835.3659945,
+  "last_ts": 1791468931.6721041,
+  "n_alerts": 3,
+  "stages": {
+   "recon": 1791468835.3659945,
+   "exfil_impact": 1791468899.1626942
+  },
+  "stage_count": 2,
+  "progression": true,
+  "systems": [
+   "sensor-corp",
+   "sensor-srv"
+  ],
+  "max_confidence": 0.989,
+  "mean_confidence": 0.69,
+  "score": 39.8,
+  "severity": "medium",
+  "title": "Recon -> Exfil / impact (files01, ws06, ws07)",
+  "techniques": [
+   "T1046",
+   "T1498.001"
+  ],
+  "entities": [
+   "host:files01",
+   "host:ws06",
+   "host:ws07",
+   "ip:13.107.9.90"
+  ],
+  "campaigns": {
+   "benign:software-rollout": 2
+  }
+ }
+]

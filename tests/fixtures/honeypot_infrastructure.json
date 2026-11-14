@@ -1,0 +1,286 @@
+{
+ "unique_ips": 150,
+ "top_ips": [
+  {
+   "ip": "127.0.0.1",
+   "events": 149,
+   "first_seen": 1794622482.899078,
+   "last_seen": 1794622903.961353,
+   "nodes": [
+    "node-local"
+   ],
+   "sensors": [
+    "banner",
+    "http",
+    "ssh",
+    "telnet"
+   ],
+   "auth": 26,
+   "commands": 35,
+   "exploits": 32,
+   "country": "private",
+   "asn": null,
+   "as_name": "private/lab network",
+   "geo_source": "rfc1918"
+  },
+  {
+   "ip": "7.189.197.191",
+   "events": 96,
+   "first_seen": 1793939234.412213,
+   "last_seen": 1794379852.67852,
+   "nodes": [
+    "node-fra",
+    "node-nyc"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 81,
+   "commands": 5,
+   "exploits": 0,
+   "country": "US",
+   "asn": 749,
+   "as_name": "DNIC-AS-00749 - United States Department of Defense (DoD)",
+   "geo_source": "iptoasn"
+  },
+  {
+   "ip": "162.27.148.200",
+   "events": 94,
+   "first_seen": 1793427979.3314526,
+   "last_seen": 1794569441.77804,
+   "nodes": [
+    "node-fra",
+    "node-lon",
+    "node-nyc"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 79,
+   "commands": 5,
+   "exploits": 0,
+   "country": "AR",
+   "asn": 64620,
+   "as_name": "SIM-ISP-AR",
+   "geo_source": "simulated"
+  },
+  {
+   "ip": "27.149.81.14",
+   "events": 93,
+   "first_seen": 1793420057.368469,
+   "last_seen": 1793813660.2144003,
+   "nodes": [
+    "node-fra",
+    "node-nyc",
+    "node-sgp"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 72,
+   "commands": 10,
+   "exploits": 0,
+   "country": "CN",
+   "asn": 4134,
+   "as_name": "CHINANET-BACKBONE - No.31,Jin-rong Street",
+   "geo_source": "iptoasn"
+  },
+  {
+   "ip": "39.34.24.72",
+   "events": 93,
+   "first_seen": 1794070883.9681175,
+   "last_seen": 1794575889.7137449,
+   "nodes": [
+    "node-nyc",
+    "node-sgp"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 78,
+   "commands": 5,
+   "exploits": 0,
+   "country": "PK",
+   "asn": 17557,
+   "as_name": "PKTELECOM-AS-PK - Pakistan Telecommunication Company Limited",
+   "geo_source": "iptoasn"
+  },
+  {
+   "ip": "194.248.174.12",
+   "events": 92,
+   "first_seen": 1794121857.3015368,
+   "last_seen": 1794562335.5104856,
+   "nodes": [
+    "node-fra",
+    "node-lon",
+    "node-sgp"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 77,
+   "commands": 5,
+   "exploits": 0,
+   "country": "NO",
+   "asn": 2119,
+   "as_name": "TELENOR-NORGE-AS Telenor Norge AS",
+   "geo_source": "iptoasn"
+  },
+  {
+   "ip": "6.172.68.209",
+   "events": 89,
+   "first_seen": 1793752273.1713126,
+   "last_seen": 1794097093.5560074,
+   "nodes": [
+    "node-fra",
+    "node-lon",
+    "node-nyc"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 80,
+   "commands": 0,
+   "exploits": 0,
+   "country": "US",
+   "asn": 749,
+   "as_name": "DNIC-AS-00749 - United States Department of Defense (DoD)",
+   "geo_source": "iptoasn"
+  },
+  {
+   "ip": "114.86.142.140",
+   "events": 88,
+   "first_seen": 1793571254.141513,
+   "last_seen": 1794260083.629827,
+   "nodes": [
+    "node-fra",
+    "node-lon"
+   ],
+   "sensors": [
+    "ssh"
+   ],
+   "auth": 79,
+   "commands": 0,
+   "exploits": 0,
+   "country": "CN",
+   "asn": 4812,
+   "as_name": "CHINANET-SH-AP - China Telecom (Group)",
+   "geo_source": "iptoasn"
+  }
+ ],
+ "prefixes": [
+  {
+   "prefix": "7.189.197.0/24",
+   "ips": 4
+  },
+  {
+   "prefix": "6.172.68.0/24",
+   "ips": 4
+  },
+  {
+   "prefix": "16.253.80.0/24",
+   "ips": 3
+  }
+ ],
+ "asns": [
+  {
+   "asn": 749,
+   "as_name": "DNIC-AS-00749 - United States Department of Defense (DoD)",
+   "country": "US",
+   "ips": 34,
+   "events": 1266
+  },
+  {
+   "asn": 4812,
+   "as_name": "CHINANET-SH-AP - China Telecom (Group)",
+   "country": "CN",
+   "ips": 13,
+   "events": 579
+  },
+  {
+   "asn": 17557,
+   "as_name": "PKTELECOM-AS-PK - Pakistan Telecommunication Company Limited",
+   "country": "PK",
+   "ips": 12,
+   "events": 438
+  }
+ ],
+ "fingerprints": [
+  {
+   "kind": "HTTP User-Agent",
+   "value": "Hello, world",
+   "events": 43,
+   "ips": 38
+  },
+  {
+   "kind": "HASSH",
+   "value": "f555226df1963d1d3c09daf865abdc9a",
+   "events": 62,
+   "ips": 29
+  },
+  {
+   "kind": "HASSH",
+   "value": "b5752e36ba6c5979a575e43178908adf",
+   "events": 79,
+   "ips": 26
+  }
+ ],
+ "client_versions": [
+  {
+   "client_version": "SSH-2.0-libssh_0.9.6",
+   "hassh": "f555226df1963d1d3c09daf865abdc9a",
+   "sessions": 62,
+   "ips": 29
+  },
+  {
+   "client_version": "SSH-2.0-Go",
+   "hassh": "b5752e36ba6c5979a575e43178908adf",
+   "sessions": 79,
+   "ips": 26
+  },
+  {
+   "client_version": "SSH-2.0-paramiko_3.4.0",
+   "hassh": "ae8c84eb0c4ab8a3f1cbb8cc4a4fc8d8",
+   "sessions": 16,
+   "ips": 4
+  }
+ ],
+ "session_kinds": [
+  {
+   "session_id": "340b96b849334224",
+   "src_ip": "127.0.0.1",
+   "node_id": "node-local",
+   "sensor": "telnet",
+   "commands": 10,
+   "start": 1794622898.960997,
+   "median_gap_s": 0.051,
+   "kind": "automated"
+  },
+  {
+   "session_id": "51523e4124364b1b",
+   "src_ip": "127.0.0.1",
+   "node_id": "node-local",
+   "sensor": "telnet",
+   "commands": 10,
+   "start": 1794622525.7725704,
+   "median_gap_s": 0.05,
+   "kind": "automated"
+  },
+  {
+   "session_id": "f9ee2d56bd68461d",
+   "src_ip": "127.0.0.1",
+   "node_id": "node-local",
+   "sensor": "ssh",
+   "commands": 11,
+   "start": 1794622489.53437,
+   "median_gap_s": 3.159,
+   "kind": "scripted (paced)"
+  }
+ ],
+ "session_kind_counts": {
+  "automated": 140,
+  "scripted (paced)": 1,
+  "single command": 4,
+  "human-like": 1
+ }
+}

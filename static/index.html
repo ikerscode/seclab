@@ -13,6 +13,9 @@
   a.btn { text-decoration: none; }
   a.btn.disabled { opacity: 0.45; pointer-events: none; }
   .intro { margin: 0 0 14px; font-size: 12px; }
+  .pipeline { margin-top: 14px; }
+  .pipeline .head { gap: 12px; align-items: center; margin-bottom: 8px; }
+  .pipeline .head h2 { margin: 0; }
 </style>
 </head>
 <body>
@@ -25,6 +28,25 @@
   <p class="intro muted">Each project runs on its own localhost port. Start and stop call the seclab script; Open is only live while the project answers its health check.</p>
   <div class="grid" id="cards">
     <p class="muted span-12">Checking projects...</p>
+  </div>
+  <div class="grid pipeline">
+    <section class="panel span-12">
+      <div class="row head">
+        <h2>Pipeline</h2>
+        <span class="muted" id="pl-last">not run yet</span>
+        <button class="btn primary" id="pl-run" type="button">Run pipeline once</button>
+      </div>
+      <p class="muted intro">honeypot-net and malware-lab findings are checked against threat-intel and sent to ai-ids with the ics-sim alarms. The incidents below are ai-ids incidents that hold pipeline alerts.</p>
+      <div id="pl-links"></div>
+    </section>
+    <section class="panel span-12">
+      <h2>Incidents with pipeline alerts</h2>
+      <div id="pl-incidents"></div>
+    </section>
+    <section class="panel span-12">
+      <h2>Indicators seen by more than one lab</h2>
+      <div id="pl-shared"></div>
+    </section>
   </div>
 </main>
 <script src="/static/hud.js"></script>

@@ -1,0 +1,178 @@
+{
+ "id": "20261114-042553-b72104",
+ "outcome": "prevented",
+ "attack": {
+  "metrics": {
+   "availability_pct": 100.0,
+   "quality_compliance_pct": 100.0,
+   "safety_score": 100.0,
+   "hazards": [],
+   "hazard_durations_s": {},
+   "time_to_hazard_s": {},
+   "delivered_m3": 778.7,
+   "noncompliant_m3": 0.0,
+   "unmet_demand_m3": 0.0,
+   "overflow_m3": 0.0,
+   "max_final_cl": 0.98,
+   "min_final_cl": 0.97,
+   "max_final_ph": 7.84,
+   "min_final_ph": 7.81,
+   "max_sodium": 78.0,
+   "min_pressure": 2.89,
+   "max_raw_level": 3.8,
+   "max_p201_temp": 59.5,
+   "duration_s": 10800.0
+  },
+  "detections": {
+   "eng_limits": {
+    "t": 1860.0,
+    "ttd_s": 60.0,
+    "message": "Engineering limit rejected write NAOH_SP=11100 ppm (range 0-200)"
+   }
+  },
+  "mitigations": [
+   "detector",
+   "eng_limits",
+   "sis"
+  ],
+  "title": "Oldsmar-style caustic setpoint raise through a remote HMI session",
+  "start_clock": "D1 06:00:00",
+  "end_clock": "D1 09:00:00",
+  "timeline": [
+   {
+    "id": 1,
+    "t": 1800.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "Remote-access session opened on HMI-01 with shared credentials",
+    "src": "10.10.2.10",
+    "techniques": "T0822,T0859",
+    "clock": "D1 06:30:00"
+   },
+   {
+    "id": 3,
+    "t": 1830.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "HMI screen read: NaOH setpoint -> ok",
+    "src": "10.10.2.10",
+    "techniques": "T0823",
+    "result": "ok",
+    "clock": "D1 06:30:30"
+   },
+   {
+    "id": 4,
+    "t": 1860.0,
+    "kind": "alert",
+    "severity": "high",
+    "source": "eng_limits",
+    "message": "Engineering limit rejected write NAOH_SP=11100 ppm (range 0-200)",
+    "clock": "D1 06:31:00"
+   },
+   {
+    "id": 6,
+    "t": 1860.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "FC6 write NAOH_SP = 11100 ppm (from 100) -> exception 03 (illegal data value)",
+    "src": "10.10.2.10",
+    "techniques": "T0836",
+    "result": "exception 03 (illegal data value)",
+    "clock": "D1 06:31:00"
+   },
+   {
+    "id": 7,
+    "t": 2100.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "Remote-access session closed",
+    "src": "10.10.2.10",
+    "techniques": "T0822",
+    "clock": "D1 06:35:00"
+   }
+  ]
+ },
+ "baseline": {
+  "availability_pct": 100.0,
+  "quality_compliance_pct": 100.0,
+  "safety_score": 100.0,
+  "hazards": [],
+  "hazard_durations_s": {},
+  "time_to_hazard_s": {},
+  "delivered_m3": 778.7,
+  "noncompliant_m3": 0.0,
+  "unmet_demand_m3": 0.0,
+  "overflow_m3": 0.0,
+  "max_final_cl": 0.98,
+  "min_final_cl": 0.97,
+  "max_final_ph": 7.84,
+  "min_final_ph": 7.81,
+  "max_sodium": 78.0,
+  "min_pressure": 2.89,
+  "max_raw_level": 3.8,
+  "max_p201_temp": 59.5,
+  "duration_s": 10800.0
+ },
+ "per_mitigation": {
+  "detector": {
+   "detected": false,
+   "ttd_s": null,
+   "message": ""
+  },
+  "eng_limits": {
+   "detected": true,
+   "ttd_s": 60.0,
+   "message": "Engineering limit rejected write NAOH_SP=11100 ppm (range 0-200)"
+  },
+  "sis": {
+   "detected": false,
+   "ttd_s": null,
+   "message": ""
+  }
+ },
+ "scenario": {
+  "key": "oldsmar",
+  "title": "Oldsmar-style caustic setpoint raise through a remote HMI session",
+  "summary": "Someone with the shared password of the remote-access tool on the HMI PC takes over the operator session and raises the sodium hydroxide setpoint from 100 ppm to 11,100 ppm, as publicly reported for Oldsmar, Florida (5 February 2021). Nobody reverts it in this run.",
+  "techniques": [
+   {
+    "id": "T0822",
+    "name": "External Remote Services"
+   },
+   {
+    "id": "T0859",
+    "name": "Valid Accounts"
+   },
+   {
+    "id": "T0823",
+    "name": "Graphical User Interface"
+   },
+   {
+    "id": "T0836",
+    "name": "Modify Parameter"
+   }
+  ],
+  "attacker": {
+   "ip": "10.10.2.10",
+   "zone": "supervisory",
+   "host": "HMI-01 (operator HMI, also runs remote-access software)",
+   "desc": "Remote-access session on HMI-01"
+  },
+  "target_hazards": [
+   "caustic_overdose"
+  ],
+  "requires": [],
+  "expected": {
+   "eng_limits": "prevented",
+   "sis": "prevented",
+   "operator": "prevented",
+   "detector": "detected"
+  },
+  "start_hour": 6.0,
+  "case_study": "Publicly reported facts (Pinellas County Sheriff press conference, 8 Feb 2021; CISA alert AA21-042A): on 5 Feb 2021 an operator at the Oldsmar, FL water treatment plant saw the mouse cursor move on the HMI. A remote-access session (TeamViewer) changed the sodium hydroxide setpoint from 100 ppm to 11,100 ppm. The operator reverted it straight away. Officials said it would have taken 24-36 hours to reach the distribution system and that pH alarms and other checks existed. The advisory noted shared passwords, an unsupported Windows 7 host and remote access exposed to the internet. In 2023 the city's former manager said the event may have been an employee error rather than an intrusion; the case is used here only for its numbers and its control weaknesses. In this simulator the caustic pump's 250 L/h capacity caps the real dose at a few hundred ppm, which is still enough to push pH above 10.5. Run it with the 'operator' mitigation to see the outcome when the change is caught within minutes."
+ }
+}

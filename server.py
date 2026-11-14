@@ -15,6 +15,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pipeline import bridge  # noqa: E402  (stdlib-only cross-lab bridge in ./pipeline)
+
 HOST = "127.0.0.1"
 PORT = 8100
 HERE = Path(__file__).resolve().parent
@@ -103,6 +106,30 @@ def all_status():
         return list(pool.map(check_project, PROJECTS))
 
 
+def pipeline_view():
+    """Last pipeline report, with each link's status re-checked against live health."""
+    view = bridge.summary()
+    up = {p["name"]: p["up"] for p in all_status()}
+    for row in view["links"]:
+        src, dst = row["link"].split(" -> ")
+        down = [n for n in (src, dst) if not up.get(n)]
+        row["status"] = "up" if not down else "down (" + ", ".join(down) + ")"
+    view["labs"] = up
+    return view
+
+
+def pipeline_run():
+    """One pipeline pass from the page (the same code as `seclab pipeline --once`)."""
+    try:
+        report = bridge.run_locked()
+    except OSError as exc:
+        return 500, {"ok": False, "error": f"pipeline failed: {exc}"}
+    if report.get("busy"):
+        return 409, {"ok": False, "error": report["error"]}
+    return 200, {"ok": True, "forward": report["forward"], "outbox": report["outbox"],
+                 "incidents": report["incidents"], "errors": report["errors"][:10]}
+
+
 def run_seclab(action, name):
     """Run the seclab script for one project. Returns (http_status, payload)."""
     try:
@@ -167,12 +194,18 @@ class PortalHandler(BaseHTTPRequestHandler):
             return self._static(path[len("/static/"):])
         if path == "/api/status":
             return self._json(200, all_status())
+        if path == "/api/pipeline":
+            return self._json(200, pipeline_view())
         return self._json(404, {"error": "not found"})
 
     def do_POST(self):
         if not self._host_allowed() or not self._origin_allowed():
             return self._json(403, {"error": "request not allowed"})
-        parts = urlsplit(self.path).path.strip("/").split("/")
+        path = urlsplit(self.path).path
+        if path == "/api/pipeline/run":
+            code, payload = pipeline_run()
+            return self._json(code, payload)
+        parts = path.strip("/").split("/")
         if (
             len(parts) == 3
             and parts[0] == "api"

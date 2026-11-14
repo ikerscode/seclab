@@ -1,0 +1,62 @@
+[
+ {
+  "id": "20261114-175453-d6946a",
+  "created": 1794671693.798054,
+  "scenario": "setpoint_change",
+  "mitigations": "detector,firewall,sis",
+  "mode": "fast",
+  "outcome": "prevented",
+  "availability_pct": 100.0,
+  "safety_score": 100.0,
+  "hazards": []
+ },
+ {
+  "id": "20261114-042652-08b3db",
+  "created": 1794623212.4569287,
+  "scenario": "insider",
+  "mitigations": "operator",
+  "mode": "realtime",
+  "outcome": "prevented",
+  "availability_pct": 100.0,
+  "safety_score": 100.0,
+  "hazards": []
+ },
+ {
+  "id": "20261114-042553-b72104",
+  "created": 1794623153.318618,
+  "scenario": "oldsmar",
+  "mitigations": "detector,eng_limits,sis",
+  "mode": "fast",
+  "outcome": "prevented",
+  "availability_pct": 100.0,
+  "safety_score": 100.0,
+  "hazards": []
+ },
+ {
+  "id": "20261114-042100-920722",
+  "created": 1794622860.9930258,
+  "scenario": "replay_masking",
+  "mitigations": "integrity",
+  "mode": "fast",
+  "outcome": "hazard occurred",
+  "availability_pct": 39.38,
+  "safety_score": 70.0,
+  "hazards": [
+   "pump_damage",
+   "supply_outage"
+  ]
+ },
+ {
+  "id": "20261114-041917-a894b8",
+  "created": 1794622757.1456895,
+  "scenario": "oldsmar",
+  "mitigations": "detector,sis",
+  "mode": "realtime",
+  "outcome": "no target hazard",
+  "availability_pct": 7.3,
+  "safety_score": 90.0,
+  "hazards": [
+   "supply_outage"
+  ]
+ }
+]

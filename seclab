@@ -30,6 +30,9 @@ usage: seclab <command> [name]
   portal             run the portal on 127.0.0.1:$PORTAL_PORT (foreground)
   tui [--once]       terminal view of all projects (starts the portal in the background if needed)
   logs <name>        follow a project's log (Ctrl+C to quit)
+  pipeline [--once|--watch [S]|--status] [--malware-host NAME]
+                     bridge the labs: honeypot/malware -> threat-intel -> ai-ids, ics-sim -> ai-ids
+  demo               start the labs one at a time, seed them, run the pipeline once, stop them
 
 projects: ${PROJECTS[*]}
 EOF
@@ -201,6 +204,22 @@ case "$cmd" in
       for _ in $(seq 1 20); do curl -s -m 1 -o /dev/null "http://127.0.0.1:$PORTAL_PORT/" && break; sleep 0.25; done
     fi
     exec python3 "$PORTAL_DIR/tui.py" "$@"
+    ;;
+  pipeline)
+    command -v python3 >/dev/null || die "python3 not found"
+    cd "$PORTAL_DIR" && exec nice -n 10 python3 -m pipeline "$@"
+    ;;
+  demo)
+    command -v python3 >/dev/null || die "python3 not found"
+    # The demo seeds and trains, so it runs under the CPU lock shared by every lab
+    # project (one heavy job at a time on this laptop) and at the lowest priority.
+    if [[ -z ${SECLAB_CPU_LOCK_HELD:-} ]] && command -v flock >/dev/null; then
+      lock="${XDG_RUNTIME_DIR:-/tmp}/seclab-cpu.lock"
+      echo "seclab: waiting for the CPU lock ($lock)"
+      # -o: the lab servers started by the demo must not inherit (and keep) the lock.
+      exec flock -o "$lock" env SECLAB_CPU_LOCK_HELD=1 "$SELF" demo "$@"
+    fi
+    cd "$PORTAL_DIR" && exec nice -n 19 env OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 python3 -m pipeline.demo "$@"
     ;;
   logs)
     [[ $# -ge 1 ]] || usage

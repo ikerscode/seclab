@@ -1,0 +1,161 @@
+{
+ "count": 8,
+ "summary": {
+  "low-confidence": 2,
+  "suspicious": 2,
+  "unknown": 4
+ },
+ "results": [
+  {
+   "input": "50.16.16.211",
+   "type": "ip",
+   "value": "50.16.16.211",
+   "match": true,
+   "asn": {
+    "asn": 14618,
+    "as_name": "AMAZON-AES",
+    "country": "US"
+   },
+   "inside_drop": null,
+   "confidence": 21.0,
+   "sources": [
+    "feodo"
+   ],
+   "tags": [
+    "botnet-c2",
+    "c2",
+    "status:online"
+   ],
+   "malware": "qakbot",
+   "first_seen": 1767102991.0,
+   "last_seen": 1773273600.0,
+   "actors": [
+    {
+     "id": "actor:storm1811",
+     "name": "Storm-1811",
+     "attack_id": "G1046"
+    },
+    {
+     "id": "actor:ta551",
+     "name": "TA551",
+     "attack_id": "G0127"
+    },
+    {
+     "id": "actor:ta577",
+     "name": "TA577",
+     "attack_id": "G1037"
+    }
+   ],
+   "verdict": "low-confidence"
+  },
+  {
+   "input": "162.243.103.246",
+   "type": "ip",
+   "value": "162.243.103.246",
+   "match": true,
+   "asn": {
+    "asn": 14061,
+    "as_name": "DIGITALOCEAN-ASN",
+    "country": "US"
+   },
+   "inside_drop": null,
+   "confidence": 21.0,
+   "sources": [
+    "feodo"
+   ],
+   "tags": [
+    "botnet-c2",
+    "c2",
+    "status:offline"
+   ],
+   "malware": "emotet",
+   "first_seen": 1654377893.0,
+   "last_seen": 1772841600.0,
+   "actors": [
+    {
+     "id": "actor:wizardspider",
+     "name": "Wizard Spider",
+     "attack_id": "G0102"
+    }
+   ],
+   "verdict": "low-confidence"
+  },
+  {
+   "input": "141.98.11.62",
+   "type": "ip",
+   "value": "141.98.11.62",
+   "match": true,
+   "asn": {
+    "asn": 209605,
+    "as_name": "hostbaltic UAB Host Baltic",
+    "country": "LT"
+   },
+   "inside_drop": "141.98.11.0/24",
+   "confidence": 40.0,
+   "sources": [
+    "tor"
+   ],
+   "tags": [
+    "in-drop",
+    "tor-exit"
+   ],
+   "malware": null,
+   "first_seen": 1794606015.4110832,
+   "last_seen": 1794606015.4110832,
+   "verdict": "suspicious"
+  },
+  {
+   "input": "101.99.85.7",
+   "type": "ip",
+   "value": "101.99.85.7",
+   "match": false,
+   "asn": {
+    "asn": 45839,
+    "country": "MY",
+    "as_name": "SHINJIRU-MY-AS-AP - Shinjiru Technology Sdn Bhd"
+   },
+   "inside_drop": "101.99.85.0/24",
+   "verdict": "suspicious"
+  },
+  {
+   "input": "203.0.113.50",
+   "type": "ip",
+   "value": "203.0.113.50",
+   "match": false,
+   "asn": null,
+   "inside_drop": null,
+   "verdict": "unknown"
+  },
+  {
+   "input": "http://198.51.100.23/bins.sh",
+   "type": "url",
+   "value": "hxxp://198[.]51[.]100[.]23/bins.sh",
+   "match": false,
+   "registered_domain": "198.51.100.23",
+   "related_in_registered_domain": 0,
+   "verdict": "unknown"
+  },
+  {
+   "input": "telemetry-sync.c2.test",
+   "type": "domain",
+   "value": "telemetry-sync[.]c2[.]test",
+   "match": false,
+   "registered_domain": "c2[.]test",
+   "related_in_registered_domain": 0,
+   "verdict": "unknown"
+  },
+  {
+   "input": "8.8.8.8",
+   "type": "ip",
+   "value": "8.8.8.8",
+   "match": false,
+   "asn": {
+    "asn": 15169,
+    "country": "US",
+    "as_name": "GOOGLE - Google LLC"
+   },
+   "inside_drop": null,
+   "verdict": "unknown"
+  }
+ ]
+}

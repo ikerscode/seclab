@@ -1,0 +1,11 @@
+[
+ {
+  "id": 1,
+  "t": 0,
+  "kind": "system",
+  "severity": "info",
+  "source": "system",
+  "message": "Modbus/TCP listening on 127.0.0.1:5020",
+  "clock": "D1 06:00:00"
+ }
+]

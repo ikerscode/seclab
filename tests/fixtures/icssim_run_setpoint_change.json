@@ -1,0 +1,178 @@
+{
+ "id": "20261114-175453-d6946a",
+ "outcome": "prevented",
+ "attack": {
+  "metrics": {
+   "availability_pct": 100.0,
+   "quality_compliance_pct": 100.0,
+   "safety_score": 100.0,
+   "hazards": [],
+   "hazard_durations_s": {},
+   "time_to_hazard_s": {},
+   "delivered_m3": 778.7,
+   "noncompliant_m3": 0.0,
+   "unmet_demand_m3": 0.0,
+   "overflow_m3": 0.0,
+   "max_final_cl": 0.98,
+   "min_final_cl": 0.97,
+   "max_final_ph": 7.84,
+   "min_final_ph": 7.81,
+   "max_sodium": 78.0,
+   "min_pressure": 2.89,
+   "max_raw_level": 3.8,
+   "max_p201_temp": 59.5,
+   "duration_s": 10800.0
+  },
+  "detections": {
+   "firewall": {
+    "t": 1800.0,
+    "ttd_s": 0.0,
+    "message": "Firewall blocked 1 request(s) from 192.168.10.37: source not in allowlist"
+   }
+  },
+  "mitigations": [
+   "detector",
+   "firewall",
+   "sis"
+  ],
+  "title": "Unauthorised setpoint change via Modbus write",
+  "start_clock": "D1 06:00:00",
+  "end_clock": "D1 09:00:00",
+  "timeline": [
+   {
+    "id": 2,
+    "t": 1800.0,
+    "kind": "alert",
+    "severity": "high",
+    "source": "firewall",
+    "message": "Firewall blocked 1 request(s) from 192.168.10.37: source not in allowlist",
+    "clock": "D1 06:30:00"
+   },
+   {
+    "id": 3,
+    "t": 1800.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "FC17 Report Server ID (discovery) -> no response (dropped)",
+    "src": "192.168.10.37",
+    "techniques": "T0888",
+    "result": "no response (dropped)",
+    "clock": "D1 06:30:00"
+   },
+   {
+    "id": 5,
+    "t": 1820.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "FC3 read holding registers 0-22 (tag discovery) -> no response (dropped)",
+    "src": "192.168.10.37",
+    "techniques": "T0861",
+    "result": "no response (dropped)",
+    "clock": "D1 06:30:20"
+   },
+   {
+    "id": 7,
+    "t": 1860.0,
+    "kind": "alert",
+    "severity": "high",
+    "source": "firewall",
+    "message": "Firewall blocked 1 request(s) from 192.168.10.37: source not in allowlist",
+    "clock": "D1 06:31:00"
+   },
+   {
+    "id": 8,
+    "t": 1860.0,
+    "kind": "attack",
+    "severity": "warn",
+    "source": "attacker",
+    "message": "FC6 write CL_SP = 6.00 mg/L -> no response (dropped)",
+    "src": "192.168.10.37",
+    "techniques": "T0855,T0836",
+    "result": "no response (dropped)",
+    "clock": "D1 06:31:00"
+   }
+  ]
+ },
+ "baseline": {
+  "availability_pct": 100.0,
+  "quality_compliance_pct": 100.0,
+  "safety_score": 100.0,
+  "hazards": [],
+  "hazard_durations_s": {},
+  "time_to_hazard_s": {},
+  "delivered_m3": 778.7,
+  "noncompliant_m3": 0.0,
+  "unmet_demand_m3": 0.0,
+  "overflow_m3": 0.0,
+  "max_final_cl": 0.98,
+  "min_final_cl": 0.97,
+  "max_final_ph": 7.84,
+  "min_final_ph": 7.81,
+  "max_sodium": 78.0,
+  "min_pressure": 2.89,
+  "max_raw_level": 3.8,
+  "max_p201_temp": 59.5,
+  "duration_s": 10800.0
+ },
+ "per_mitigation": {
+  "detector": {
+   "detected": false,
+   "ttd_s": null,
+   "message": ""
+  },
+  "firewall": {
+   "detected": true,
+   "ttd_s": 0.0,
+   "message": "Firewall blocked 1 request(s) from 192.168.10.37: source not in allowlist"
+  },
+  "sis": {
+   "detected": false,
+   "ttd_s": null,
+   "message": ""
+  }
+ },
+ "scenario": {
+  "key": "setpoint_change",
+  "title": "Unauthorised setpoint change via Modbus write",
+  "summary": "A phished office PC on a flat network discovers the PLC, reads its holding registers and raises the free chlorine setpoint from 1.0 to 6.0 mg/L with a single FC 6 write.",
+  "techniques": [
+   {
+    "id": "T0888",
+    "name": "Remote System Information Discovery"
+   },
+   {
+    "id": "T0861",
+    "name": "Point & Tag Identification"
+   },
+   {
+    "id": "T0855",
+    "name": "Unauthorized Command Message"
+   },
+   {
+    "id": "T0836",
+    "name": "Modify Parameter"
+   }
+  ],
+  "attacker": {
+   "ip": "192.168.10.37",
+   "zone": "enterprise",
+   "host": "CORP-WS-37 (phished office PC)",
+   "desc": "Compromised corporate workstation"
+  },
+  "target_hazards": [
+   "chlorine_overdose"
+  ],
+  "requires": [],
+  "expected": {
+   "segmentation": "prevented",
+   "firewall": "prevented",
+   "eng_limits": "prevented",
+   "sis": "prevented",
+   "detector": "detected"
+  },
+  "start_hour": 6.0,
+  "case_study": ""
+ }
+}

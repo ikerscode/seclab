@@ -1,0 +1,128 @@
+{
+ "hosts": [
+  {
+   "ip": "10.10.1.10",
+   "host": "PLC-01",
+   "zone": "control"
+  },
+  {
+   "ip": "10.10.4.11",
+   "host": "SIS-01",
+   "zone": "safety"
+  },
+  {
+   "ip": "10.10.2.10",
+   "host": "HMI-01 (operator HMI, also runs remote-access software)",
+   "zone": "supervisory"
+  },
+  {
+   "ip": "10.10.2.20",
+   "host": "EWS-01 (engineering workstation)",
+   "zone": "supervisory"
+  },
+  {
+   "ip": "10.10.2.50",
+   "host": "LAB-CLIENT (your external Modbus tools)",
+   "zone": "supervisory"
+  },
+  {
+   "ip": "10.10.2.66",
+   "host": "Unknown laptop on the control LAN",
+   "zone": "supervisory"
+  },
+  {
+   "ip": "10.10.3.5",
+   "host": "HIST-01 (historian)",
+   "zone": "operations"
+  },
+  {
+   "ip": "10.10.4.10",
+   "host": "SIS-EWS (safety engineering workstation)",
+   "zone": "safety"
+  },
+  {
+   "ip": "172.16.0.20",
+   "host": "RA-GW (remote access gateway)",
+   "zone": "dmz"
+  },
+  {
+   "ip": "192.168.10.37",
+   "host": "CORP-WS-37 (phished office PC)",
+   "zone": "enterprise"
+  }
+ ],
+ "scenarios": [
+  {
+   "key": "setpoint_change",
+   "attacker": {
+    "ip": "192.168.10.37",
+    "zone": "enterprise",
+    "host": "CORP-WS-37 (phished office PC)",
+    "desc": "Compromised corporate workstation"
+   }
+  },
+  {
+   "key": "oldsmar",
+   "attacker": {
+    "ip": "10.10.2.10",
+    "zone": "supervisory",
+    "host": "HMI-01 (operator HMI, also runs remote-access software)",
+    "desc": "Remote-access session on HMI-01"
+   }
+  },
+  {
+   "key": "fdi_chlorine",
+   "attacker": {
+    "ip": "",
+    "zone": "field",
+    "host": "Field device / analyser 4-20 mA or fieldbus link (Level 0/1)",
+    "desc": "Field device / analyser 4-20 mA or fieldbus link (Level 0/1)"
+   }
+  },
+  {
+   "key": "replay_masking",
+   "attacker": {
+    "ip": "10.10.2.66",
+    "zone": "supervisory",
+    "host": "Unknown laptop on the control LAN",
+    "desc": "Rogue laptop doing ARP spoofing on the supervisory LAN"
+   }
+  },
+  {
+   "key": "logic_tamper",
+   "attacker": {
+    "ip": "10.10.2.66",
+    "zone": "supervisory",
+    "host": "Unknown laptop on the control LAN",
+    "desc": "Unknown laptop on the control LAN with the engineering software"
+   }
+  },
+  {
+   "key": "modbus_dos",
+   "attacker": {
+    "ip": "192.168.10.37",
+    "zone": "enterprise",
+    "host": "CORP-WS-37 (phished office PC)",
+    "desc": "Compromised corporate workstation running a flooding tool"
+   }
+  },
+  {
+   "key": "sis_bypass",
+   "attacker": {
+    "ip": "10.10.2.20",
+    "zone": "supervisory",
+    "host": "EWS-01 (engineering workstation)",
+    "desc": "Compromised engineering workstation EWS-01"
+   }
+  },
+  {
+   "key": "insider",
+   "attacker": {
+    "ip": "10.10.2.20",
+    "zone": "supervisory",
+    "host": "EWS-01 (engineering workstation)",
+    "desc": "Legitimate engineer account on EWS-01"
+   }
+  }
+ ]
+}
