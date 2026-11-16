@@ -123,10 +123,26 @@ class Demo:
         if job.get("status") != "done":
             return None
         sha = job.get("target") if isinstance(job.get("target"), str) and len(job["target"]) == 64 else None
-        if sha is None:   # a specimen job's target is the specimen name: take the newest sample from it
-            rows = [r for r in cl.get("/api/samples") if r.get("source") == f"specimen:{SPECIMEN}"]
-            sha = max(rows, key=lambda r: r.get("submitted_at") or 0)["sha256"] if rows else None
+        if sha is None:   # a specimen job's target is the specimen name: find the sample it just analysed
+            sha = self._latest_specimen_sample(cl)
         return sha
+
+    @staticmethod
+    def _latest_specimen_sample(cl: LabClient) -> str | None:
+        """sha256 of the sample the newest run of SPECIMEN analysed.
+
+        /api/specimens reports the newest analysis per specimen. Sorting /api/samples by
+        submitted_at is wrong: a re-run of the default specimen reuses its existing row
+        (same content, same hash, submitted_at unchanged), so an older variant from
+        another run could be picked and the sample the pipeline reports on stays
+        unmapped (its alerts then name the sample, not CORP-WS-37, and never correlate).
+        """
+        listing = cl.get("/api/specimens")
+        for spec in listing if isinstance(listing, list) else []:
+            last = spec.get("last") if isinstance(spec, dict) and spec.get("name") == SPECIMEN else None
+            if isinstance(last, dict) and isinstance(last.get("sha256"), str) and len(last["sha256"]) == 64:
+                return last["sha256"]
+        return None
 
     @staticmethod
     def _upload_static(cl: LabClient, path: Path) -> int:

@@ -220,3 +220,29 @@ def test_demo_flow_against_fake_labs(lab_set, monkeypatch, tmp_path, capsys):
     assert {"malware_exec", "modbus_blocked"} <= {a["category"] for a in corp}
     out = capsys.readouterr().out
     assert "treats sample caac2eacfaab as found on CORP-WS-37" in out and "INC-1000" in out
+
+
+def test_demo_sandbox_run_picks_the_sample_it_just_analysed(lab_set, monkeypatch):
+    """A re-run of the default specimen reuses its sample row, so submitted_at is old.
+
+    An older variant of the same specimen (a training run) has a newer submitted_at. The demo must
+    still map the sample the run analysed to CORP-WS-37, otherwise the malware alerts name the
+    sample as their host and never meet the ICS alerts from CORP-WS-37.
+    """
+    from pipeline import demo
+    servers, clients, ai = lab_set
+    variant = "caac2eacfaab" + "0" * 52
+    samples = load("malwarelab_samples.json")
+    samples = [dict(r, submitted_at=1.0) if r.get("sha256") == C2_SHA else r for r in samples]
+    samples.append({"sha256": variant, "source": "specimen:c2_beacon", "status": "done", "verdict": "malicious",
+                    "category": "backdoor-c2", "score": 94, "submitted_at": 9e9})
+    servers["malware-lab"].routes.update({
+        ("GET", "/api/samples"): samples,
+        ("GET", "/api/sandbox"): {"image_present": True},
+        ("POST", "/api/specimens/c2_beacon/run"): {"job": 5},
+        ("GET", "/api/jobs/5"): {"id": 5, "status": "done", "target": "c2_beacon", "message": "malicious"},
+        ("GET", "/api/specimens"): [{"name": "other", "last": None},
+                                    {"name": "c2_beacon", "last": {"sha256": C2_SHA, "analysed_at": 2.0}}]})
+    assert demo.Demo(clients).seed_malware() == C2_SHA
+    servers["malware-lab"].routes[("GET", "/api/specimens")] = [{"name": "c2_beacon", "last": None}]
+    assert demo.Demo(clients).seed_malware() is None
