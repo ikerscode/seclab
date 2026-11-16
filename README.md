@@ -1,3 +1,5 @@
+[![tests](https://github.com/ikerscode/seclab/actions/workflows/tests.yml/badge.svg)](https://github.com/ikerscode/seclab/actions/workflows/tests.yml)
+
 # seclab
 
 A set of small, local security labs that I use to practise and demonstrate defensive
