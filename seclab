@@ -24,8 +24,9 @@ usage() {
   cat <<EOF
 usage: seclab <command> [name]
 
-  up                 start the whole stack: portal + all five labs (manual; never at login)
+  up [--no-update]   start the whole stack: portal + all five labs (pulls latest first)
   down               stop the whole stack: all five labs + portal
+  update             git pull --ff-only every repo (also runs automatically on 'up')
   start <name|all>   start a project in the background (runs its ./run.sh)
   stop <name|all>    stop a project (SIGTERM, then SIGKILL after 5 s)
   status             show port, pid, running state and health of each project
@@ -172,6 +173,38 @@ show_status() {
   done
 }
 
+# Pull the latest code for the portal and every lab repo. Fast-forward only, so it
+# never merges, never rebases and never discards local work; it refuses cleanly if a
+# repo has diverged. Never prompts (GIT_TERMINAL_PROMPT=0) and times out, so a slow or
+# offline network can't hang startup. Repos with uncommitted changes are left alone.
+update_repos() {
+  command -v git >/dev/null 2>&1 || return 0
+  echo "checking for updates (git pull --ff-only)..."
+  local entry name dir before after out
+  for entry in "portal|$PORTAL_DIR"; do
+    name="${entry%%|*}"; dir="${entry#*|}"; _update_one "$name" "$dir"
+  done
+  for name in "${PROJECTS[@]}"; do _update_one "$name" "$ROOT/$name"; done
+}
+_update_one() {
+  local name="$1" dir="$2" before after out
+  [[ -d "$dir/.git" ]] || return 0
+  if [[ -n "$(git -C "$dir" status --porcelain 2>/dev/null)" ]]; then
+    echo "  $name: local changes, left as-is"; return 0
+  fi
+  before="$(git -C "$dir" rev-parse --short HEAD 2>/dev/null)"
+  out="$(GIT_TERMINAL_PROMPT=0 timeout 25 git -C "$dir" pull --ff-only --quiet 2>&1)"
+  if [[ $? -ne 0 ]]; then
+    echo "  $name: skipped (${out%%$'\n'*})"; return 0
+  fi
+  after="$(git -C "$dir" rev-parse --short HEAD 2>/dev/null)"
+  if [[ "$before" != "$after" ]]; then
+    echo "  $name: updated $before -> $after"
+  else
+    echo "  $name: up to date"
+  fi
+}
+
 cmd="${1:-}"
 [[ $# -gt 0 ]] && shift
 
@@ -192,10 +225,14 @@ case "$cmd" in
   status)
     show_status
     ;;
+  update)
+    update_repos
+    ;;
   up)
     # Manual "start the whole stack": portal (web screen) + all five labs. Never runs at login.
     command -v python3 >/dev/null || die "python3 not found"
     mkdir -p "$RUN_DIR"
+    [[ ${1:-} == --no-update || ${SECLAB_NO_UPDATE:-} == 1 ]] || update_repos
     if curl -s -m 1 -o /dev/null "http://127.0.0.1:$PORTAL_PORT/"; then
       echo "portal: already up on 127.0.0.1:$PORTAL_PORT"
     else
