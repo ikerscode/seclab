@@ -8,6 +8,21 @@ portal on port 8100 starts them, stops them and shows whether each one is up.
 
 Everything listens on 127.0.0.1 only. Nothing here is meant to be exposed to a network.
 
+![The seclab portal](docs/portal.png)
+
+## Quick start
+
+```
+git clone https://github.com/ikerscode/seclab.git portal      # plus the five lab repos next to it
+./portal/seclab up        # pulls the latest code, then starts the portal and all five labs
+# open http://127.0.0.1:8100
+./portal/seclab demo      # optional: scripted run of the whole detection pipeline (about 30 s)
+./portal/seclab down      # stop everything
+```
+
+Nothing starts by itself at login. `up` and `down` are the only things that start or stop
+the stack. Layout and per-project setup are described below.
+
 ## Projects
 
 | Project       | Port | What it is                                                                                  |
@@ -47,6 +62,9 @@ seclab/
 Run it from the seclab folder, or through the symlink from anywhere.
 
 ```
+./seclab up [--no-update]   pull the latest code, then start the portal and all five labs
+./seclab down               stop all five labs and the portal
+./seclab update             git pull --ff-only in every repo (never merges, skips repos with local changes)
 ./seclab start all          start every project in the background
 ./seclab start ics-sim      start one project
 ./seclab stop all           stop every project (TERM, then KILL after 5 seconds)
