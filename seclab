@@ -24,6 +24,8 @@ usage() {
   cat <<EOF
 usage: seclab <command> [name]
 
+  up                 start the whole stack: portal + all five labs (manual; never at login)
+  down               stop the whole stack: all five labs + portal
   start <name|all>   start a project in the background (runs its ./run.sh)
   stop <name|all>    stop a project (SIGTERM, then SIGKILL after 5 s)
   status             show port, pid, running state and health of each project
@@ -189,6 +191,28 @@ case "$cmd" in
     ;;
   status)
     show_status
+    ;;
+  up)
+    # Manual "start the whole stack": portal (web screen) + all five labs. Never runs at login.
+    command -v python3 >/dev/null || die "python3 not found"
+    mkdir -p "$RUN_DIR"
+    if curl -s -m 1 -o /dev/null "http://127.0.0.1:$PORTAL_PORT/"; then
+      echo "portal: already up on 127.0.0.1:$PORTAL_PORT"
+    else
+      (umask 077; setsid nohup python3 "$PORTAL_DIR/server.py" >>"$RUN_DIR/portal.log" 2>&1 </dev/null &)
+      for _ in $(seq 1 20); do curl -s -m 1 -o /dev/null "http://127.0.0.1:$PORTAL_PORT/" && break; sleep 0.25; done
+      echo "portal: started on 127.0.0.1:$PORTAL_PORT"
+    fi
+    resolve_targets all
+    for name in "${TARGETS[@]}"; do start_one "$name"; done
+    echo "open http://127.0.0.1:$PORTAL_PORT in your browser"
+    ;;
+  down)
+    # Manual "stop the whole stack": all five labs + the portal.
+    resolve_targets all
+    for name in "${TARGETS[@]}"; do stop_one "$name"; done
+    pid="$(ss -ltnpH "sport = :$PORTAL_PORT" 2>/dev/null | grep -oP 'pid=\K[0-9]+' | head -1)"
+    if [[ -n $pid ]]; then kill "$pid" 2>/dev/null && echo "portal: stopped (pid $pid)"; else echo "portal: not running"; fi
     ;;
   portal)
     command -v python3 >/dev/null || die "python3 not found"
